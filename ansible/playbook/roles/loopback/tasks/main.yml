@@ -1,0 +1,7 @@
+- name: config loopback
+  arista.eos.eos_l3_interfaces:
+    config:
+      - name: Loopback0
+        ipv4:
+          - address: "{{ loopback }}"
+    state: merged

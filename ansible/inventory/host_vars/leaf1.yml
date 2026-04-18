@@ -1,0 +1,14 @@
+loopback: "3.3.3.3/32"
+
+router_id: "3.3.3.3"
+
+interfaces:
+  - id: "eth1"
+    name: "Ethernet1"
+    ipv4: 10.0.0.2/30
+  - id: "eth2"
+    name: "Ethernet2"
+    ipv4: 10.0.0.10/30
+  - id: "eth3"
+    name: "Ethernet3"
+    ipv4: 10.0.1.1/24

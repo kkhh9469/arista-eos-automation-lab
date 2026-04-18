@@ -1,0 +1,22 @@
+- name: no switchport
+  arista.eos.eos_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        mode: "{{ l3_mode }}"
+        enabled: true
+  loop: "{{ interfaces }}"
+
+- name: config ipv4 addr
+  arista.eos.eos_l3_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        ipv4:
+          - address: "{{ item.ipv4 }}"
+  loop: "{{ interfaces }}"
+
+- name: enable int
+  arista.eos.eos_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        enabled: true
+  loop: "{{ interfaces }}"

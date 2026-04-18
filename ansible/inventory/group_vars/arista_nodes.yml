@@ -1,0 +1,3 @@
+l3_mode: layer3
+process_id: "1"
+ospf_area: "0.0.0.0"

@@ -1,0 +1,10 @@
+---
+- name: controller
+  hosts: arista_nodes
+  gather_facts: false
+  
+  roles:
+    # - ipv4
+    # - loopback
+    - ospf
+    # - get_json

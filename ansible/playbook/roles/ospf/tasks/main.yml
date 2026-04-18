@@ -1,0 +1,34 @@
+- name: active ip routing
+  arista.eos.eos_config:
+    lines:
+      - ip routing
+
+- name: config process and router id
+  arista.eos.eos_ospfv2:
+    config:
+      processes:
+        - process_id: "{{ process_id }}"
+          router_id: "{{ router_id }}"
+    state: merged
+
+- name: attach ospf area in loopback
+  arista.eos.eos_ospf_interfaces:
+    config:
+      - name: "Loopback0"
+        address_family:
+          - afi: ipv4
+            area: 
+              area_id: "{{ ospf_area }}"
+    state: merged
+
+- name: attach ospf area in int
+  arista.eos.eos_ospf_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        address_family:
+          - afi: ipv4
+            area: 
+              area_id: "{{ ospf_area }}"
+            network: "point-to-point"
+    state: merged
+  loop: "{{ interfaces }}"
