@@ -1,8 +1,0 @@
-- name: OSPF 인터페이스 구조 추출 (Gather)
-  arista.eos.eos_ospf_interfaces:
-    state: gathered
-  register: gathered_ospf
-
-- name: 추출된 JSON 구조 출력
-  debug:
-    var: gathered_ospf.gathered

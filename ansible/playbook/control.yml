@@ -3,8 +3,27 @@
   hosts: arista_nodes
   gather_facts: false
   
-  roles:
-    # - ipv4
-    # - loopback
-    - ospf
-    # - get_json
+  tasks:
+    - name: collect config (before)
+      include_role:
+        name: collect_config
+      vars:
+        phase: "before"
+    
+    - name: ipv4
+      include_role:
+        name: ipv4
+
+    - name: loopback
+      include_role:
+        name: loopback
+
+    - name: ospf
+      include_role:
+        name: ospf
+
+    - name: collect config (after)
+      include_role:
+        name: collect_config
+      vars:
+        phase: "after"
