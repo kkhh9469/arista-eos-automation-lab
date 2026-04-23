@@ -1,0 +1,7 @@
+- name: enable api
+  arista.eos.eos_config:
+    parents: management api http-commands
+    lines:
+      - protocol http
+      - no shutdown
+    save_when: changed
