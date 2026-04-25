@@ -1,56 +1,68 @@
 import pyeapi
-import json
 from pprint import pprint
-import csv
-
-
-def parsing(host_ip):
-    connection = pyeapi.client.connect(
-        transport='http',
-        host=host_ip,
-        # host='172.20.20.10',
-        username='admin',
-        password='admin'
-    )
-
-    node = pyeapi.client.Node(connection)
-
-    cmds = ['show ip interface brief', 'show hostname', 'sh ip ospf neighbor']
-
-    raw_data = node.run_commands(cmds, encoding='json')
-
-    int_info = raw_data[0]['interfaces']
-    hostname = raw_data[1]['hostname']
-    ospf_neighbor = raw_data[2]['vrfs']['default']['instList']
-    ospf_instance_number = ospf_neighbor.keys()
-    pprint(ospf_neighbor)
-
-    data_list = []
-    for int_name, details in int_info.items():
-        ipv4_data = details['interfaceAddress']['ipAddr']
-        ipv4_addr = ipv4_data['address']
-        ipv4_mask = ipv4_data['maskLen']
-        ipv4_merge = f'{ipv4_addr}/{ipv4_mask}'
-        status = details['lineProtocolStatus']
-
-        row = [hostname, int_name, status, ipv4_merge, ospf_instance_number]
-
-        data_list.append(row)
-    
-    return data_list
-
-def save_csv(data_list):
-    with open('./pyeapi/report', 'w',encoding='utf-8') as f:
-        writer = csv.writer(f)
-
+import json
 
 
 # device mgmt ip list
 host_ips = ['172.20.20.10', '172.20.20.20', '172.20.20.30', '172.20.20.40']
-merge_data = []
+merge_data = {}
 
 for host_ip in host_ips:
-    expoet_list = parsing(host_ip)
-    merge_data.extend(expoet_list)
+    connection = pyeapi.client.connect(
+        transport='http',
+        host= host_ip,
+        username='admin',
+        password='admin'
+    )
+    
+    node = pyeapi.client.Node(connection)
 
-pprint(merge_data)
+    cmds = ['sh hostname', 'sh ip interface brief', 'sh ip ospf neighbor']
+    raw_data = node.enable(cmds)
+    
+    hostname = raw_data[0]['result']['hostname']
+    ip_info = raw_data[1]['result']['interfaces']
+    ospf_info = raw_data[2]['result']['vrfs']['default']['instList']
+
+    merge_data.setdefault(hostname, {
+        "hostname": hostname,
+        "interfaces": [],
+        "ospf": []
+    })
+
+    for int_name, data in ip_info.items():
+        name = data.get('name')
+        ip = data.get('interfaceAddress').get('ipAddr').get('address')
+        prifix = data.get('interfaceAddress').get('ipAddr').get('maskLen')
+        int_status = data.get('interfaceStatus')
+        int_protocol_status = data.get('lineProtocolStatus')
+
+        merge_data[hostname]['interfaces'].append({
+            "name": name,
+            "status": int_status,
+            "protocol": int_protocol_status,
+            "ip": ip,
+            "prifix": prifix,
+            "network": f'{ip}/{prifix}'
+        })
+
+    for instant, data in ospf_info.items():
+        for detail in data['ospfNeighborEntries']:
+            adjacency = detail.get('adjacencyState')
+            area = detail.get('details').get('areaId')
+            int_addr = detail.get('interfaceAddress')
+            neighboer_int = detail.get('interfaceName')
+
+            merge_data[hostname]["ospf"].append({
+                "process_id": instant,
+                "adjacency": adjacency,
+                "area": area,
+                "interface": neighboer_int,
+                "neighbor_ip": int_addr,
+            })
+
+merge_data = list(merge_data.values())
+
+with open('./pyeapi/int_info.json', 'w') as f:
+    json.dump(merge_data, f, indent=4)
+
