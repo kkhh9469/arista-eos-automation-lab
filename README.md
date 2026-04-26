@@ -1,9 +1,9 @@
 # Network Automation Project
 
 ## Overview
-Ansible을 이용해서 Arista EOS 장비에 자동으로 설정을 밀어넣고 
-pyeapi을 이용해서 설정된 report를 json으로 확인할 수 있다.
+Ansible을 이용해서 Arista EOS 장비에 자동으로 설정을 밀어넣는다.
 
+pyeapi을 이용해서 현재 장비 설정 상태를 report.json으로 추출해서 확인할 수 있다.
 
 ## Tech Stack
 * Ansible
@@ -39,6 +39,7 @@ python3 pyeapi/parsing.py
 ```
 
 ## Example Output
+report.json
 ```
 {
     "hostname": "spine1",
