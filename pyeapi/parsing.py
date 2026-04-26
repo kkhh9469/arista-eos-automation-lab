@@ -33,7 +33,7 @@ for host_ip in host_ips:
     for int_name, data in ip_info.items():
         name = data.get('name')
         ip = data.get('interfaceAddress').get('ipAddr').get('address')
-        prifix = data.get('interfaceAddress').get('ipAddr').get('maskLen')
+        prefix = data.get('interfaceAddress').get('ipAddr').get('maskLen')
         int_status = data.get('interfaceStatus')
         int_protocol_status = data.get('lineProtocolStatus')
 
@@ -42,8 +42,8 @@ for host_ip in host_ips:
             "status": int_status,
             "protocol": int_protocol_status,
             "ip": ip,
-            "prifix": prifix,
-            "network": f'{ip}/{prifix}'
+            "prefix": prefix,
+            "network": f'{ip}/{prefix}'
         })
 
     for instant, data in ospf_info.items():
