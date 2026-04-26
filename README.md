@@ -12,7 +12,7 @@ pyeapi을 이용해서 설정된 report를 json으로 확인할 수 있다.
 * pyeapi
 
 ## Topology
-![./img/topo.png]
+![topology](./img/topo.png)
 
 ## Featuers
 * enable API
