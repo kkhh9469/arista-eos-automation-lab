@@ -17,7 +17,7 @@ for host_ip in host_ips:
     
     node = pyeapi.client.Node(connection)
 
-    cmds = ['sh hostname', 'sh ip interface brief', 'sh ip ospf neighbor']
+    cmds = ['sh hostname', 'sh ip interface brief', 'sh ip ospf neighbor', 'sh ip route']
     raw_data = node.enable(cmds)
     
     hostname = raw_data[0]['result']['hostname']
@@ -63,6 +63,6 @@ for host_ip in host_ips:
 
 merge_data = list(merge_data.values())
 
-with open('./pyeapi/int_info.json', 'w') as f:
+with open('./pyeapi/report.json', 'w') as f:
     json.dump(merge_data, f, indent=4)
 
